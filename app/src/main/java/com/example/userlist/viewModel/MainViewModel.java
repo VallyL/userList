@@ -2,7 +2,6 @@ package com.example.userlist.viewModel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.userlist.model.User;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class MainViewModel extends ViewModel {
     private final UserRepository userRepository;
-    private final MutableLiveData<Boolean> navigateToList = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToList = new MutableLiveData<>(false);
     private final MutableLiveData<UserListState> userListState = new MutableLiveData<>(new UserListState());
 
     public MainViewModel() {
@@ -47,19 +46,22 @@ public class MainViewModel extends ViewModel {
             userListState.setValue(currentState);
 
             userRepository.getUsersByPage(page).observeForever(usersList -> {
-                currentState.setLoading(false);
-                if (usersList != null) {
-                    List<User> currentUsers = currentState.getUsers();
-                    if (currentUsers == null) {
-                        currentUsers = new ArrayList<>();
+                // Ensure this block is run on the main thread
+                if (currentState != null) {
+                    currentState.setLoading(false);
+                    if (usersList != null) {
+                        List<User> currentUsers = currentState.getUsers();
+                        if (currentUsers == null) {
+                            currentUsers = new ArrayList<>();
+                        }
+                        currentUsers.addAll(usersList);
+                        currentState.setUsers(currentUsers);
+                        currentState.setErrorMessage(null);
+                    } else {
+                        currentState.setErrorMessage("Failed to load users.");
                     }
-                    currentUsers.addAll(usersList);
-                    currentState.setUsers(currentUsers);
-                    currentState.setErrorMessage(null);
-                } else {
-                    currentState.setErrorMessage("Failed to load users.");
+                    userListState.postValue(currentState);
                 }
-                userListState.postValue(currentState);
             });
         }
     }
