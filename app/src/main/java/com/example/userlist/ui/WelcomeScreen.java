@@ -26,7 +26,9 @@ public class WelcomeScreen extends Fragment {
         welcomeMessage.setText("Hello, Dear Guest! Welcome to your guest list! By clicking on the bottom of the screen, you can open it to view and edit if necessary. Enjoy!");
 
         Button openListButton = view.findViewById(R.id.open_list_button);
-        openListButton.setOnClickListener(v -> viewModel.navigateToList());
+        openListButton.setOnClickListener(v -> {
+            viewModel.setNavigateToList(true); // Trigger navigation
+        });
 
         // Preview the first user (if available)
         TextView userPreview = view.findViewById(R.id.user_preview);

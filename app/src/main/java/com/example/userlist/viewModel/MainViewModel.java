@@ -34,6 +34,10 @@ public class MainViewModel extends ViewModel {
         navigateToList.setValue(true);
     }
 
+    public void setNavigateToList(boolean navigate) {
+        navigateToList.setValue(navigate);
+    }
+
     public void resetNavigateToList() {
         navigateToList.setValue(false);
     }

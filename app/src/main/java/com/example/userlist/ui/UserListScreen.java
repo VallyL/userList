@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.userlist.R;
-import com.example.userlist.model.User;
 import com.example.userlist.viewModel.MainViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 public class UserListScreen extends Fragment {
     private MainViewModel viewModel;
@@ -23,6 +23,7 @@ public class UserListScreen extends Fragment {
     private UserAdapter adapter;
     private boolean isLoading = false;
     private int currentPage = 1;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -38,17 +39,26 @@ public class UserListScreen extends Fragment {
         adapter = new UserAdapter();
         recyclerView.setAdapter(adapter);
 
+        // Initialize ProgressBar
+        progressBar = view.findViewById(R.id.progress_bar);
+
         // Observe user data
         viewModel.getUserListState().observe(getViewLifecycleOwner(), state -> {
             if (state != null) {
                 if (state.isLoading()) {
                     // Show loading indicator if needed
+                    progressBar.setVisibility(View.VISIBLE);
                 } else if (state.getUsers() != null) {
                     adapter.setUsers(state.getUsers());
-                } else {
-                    Toast.makeText(getContext(), state.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    isLoading = false; // Reset loading state on successful load
+                } else if (state.getErrorMessage() != null) {
+                    progressBar.setVisibility(View.GONE);
+                    Snackbar.make(recyclerView, state.getErrorMessage(), Snackbar.LENGTH_LONG)
+                            .setAction("Retry", v -> viewModel.loadMoreUsers(currentPage))
+                            .show();
+                    isLoading = false; // Reset loading state on error
                 }
-                isLoading = false; // Reset loading state
             }
         });
 

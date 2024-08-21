@@ -2,7 +2,6 @@ package com.example.userlist;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.userlist.ui.WelcomeScreen;
 import com.example.userlist.ui.UserListScreen;
@@ -26,19 +25,13 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
-        // Observe navigation state
-        viewModel.getNavigateToList().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean navigate) {
-                if (navigate != null && navigate) {
-                    // Replace fragment if navigate is true
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new UserListScreen())
-                            .commit();
-
-                    // Optionally reset navigation state to prevent multiple triggers
-                    viewModel.resetNavigateToList();
-                }
+        // Observe navigation state with lambda
+        viewModel.getNavigateToList().observe(this, navigate -> {
+            if (navigate != null && navigate) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new UserListScreen())
+                        .commit();
+                viewModel.resetNavigateToList(); // Reset navigation state
             }
         });
     }
