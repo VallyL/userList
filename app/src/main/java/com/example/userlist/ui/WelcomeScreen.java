@@ -1,6 +1,5 @@
 package com.example.userlist.ui;
 
-
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.example.userlist.R;
 import com.example.userlist.viewModel.MainViewModel;
+import com.example.userlist.state.UserListState;
 
 public class WelcomeScreen extends Fragment {
     private MainViewModel viewModel;
@@ -29,9 +30,9 @@ public class WelcomeScreen extends Fragment {
 
         // Preview the first user (if available)
         TextView userPreview = view.findViewById(R.id.user_preview);
-        viewModel.getUsers().observe(getViewLifecycleOwner(), users -> {
-            if (users != null && !users.isEmpty()) {
-                userPreview.setText(users.get(0).getFirstName() + " " + users.get(0).getLastName());
+        viewModel.getUserListState().observe(getViewLifecycleOwner(), userListState -> {
+            if (userListState != null && userListState.getUsers() != null && !userListState.getUsers().isEmpty()) {
+                userPreview.setText(userListState.getUsers().get(0).getFirstName() + " " + userListState.getUsers().get(0).getLastName());
                 userPreview.setOnClickListener(v -> viewModel.navigateToList());
             }
         });

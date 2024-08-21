@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.userlist.data.UserApi;
 import com.example.userlist.data.RetrofitClient;
 import com.example.userlist.model.User;
+import com.example.userlist.model.UserResponse;
 
 import java.util.List;
 
@@ -22,18 +23,18 @@ public class UserRepository {
 
     public LiveData<List<User>> getUsersByPage(int page) {
         MutableLiveData<List<User>> data = new MutableLiveData<>();
-        userApi.getUsers(page).enqueue(new Callback<List<User>>() {
+        userApi.getUsers(page).enqueue(new Callback<UserResponse>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    data.setValue(response.body());
+                    data.setValue(response.body().getData()); // Extract the list of users from UserResponse
                 } else {
                     data.setValue(null); // Handle HTTP error response
                 }
             }
 
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<UserResponse> call, Throwable t) {
                 data.setValue(null); // Handle network failure
             }
         });

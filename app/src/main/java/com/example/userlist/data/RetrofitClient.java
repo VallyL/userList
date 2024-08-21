@@ -9,7 +9,7 @@ public class RetrofitClient {
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://reqres.in/") // Replace with your API base URL
+                    .baseUrl("https://reqres.in/api/users?page=2") // Replace with your API base URL
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
