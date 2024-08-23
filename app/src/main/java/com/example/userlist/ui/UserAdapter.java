@@ -54,8 +54,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     public void setUsers(List<User> users) {
-        this.userList = users != null ? users : new ArrayList<>();
-        notifyDataSetChanged();
+        if (users != null) {
+            this.userList.clear();
+            this.userList.addAll(users);
+            notifyDataSetChanged();  // Use notifyDataSetChanged() for now
+        } else {
+            this.userList = new ArrayList<>();
+            notifyDataSetChanged();  // Or handle the empty state accordingly
+        }
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
