@@ -6,11 +6,11 @@
     android:background="@android:color/black">
 
     <TextView
-        android:id="@+id/welcome_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textColor="@android:color/white" />
+    android:id="@+id/welcome_message"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="20sp"
+    android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/user_preview"

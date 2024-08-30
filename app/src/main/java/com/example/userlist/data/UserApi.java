@@ -8,6 +8,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface UserApi {
-    @GET("users?page=2")
+    @GET("users")
     Call<UserResponse> getUsers(@Query("page") int page);
 }

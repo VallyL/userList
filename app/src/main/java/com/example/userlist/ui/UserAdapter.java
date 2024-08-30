@@ -30,12 +30,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = userList.get(position);
 
-        // Safeguard against null values
+
         String fullName = (user.getFirstName() != null ? user.getFirstName() : "") + " " +
                 (user.getLastName() != null ? user.getLastName() : "");
         holder.nameTextView.setText(fullName.trim());
 
-        // Load image using Picasso with a null check
+
         if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
             Picasso.get()
                     .load(user.getAvatar())
@@ -43,7 +43,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     .error(R.drawable.ic_avatar_placeholder_foreground) // Error image if loading fails
                     .into(holder.avatarImageView);
         } else {
-            // Set a placeholder if avatar URL is null or empty
+
             holder.avatarImageView.setImageResource(R.drawable.ic_avatar_placeholder_foreground);
         }
     }
@@ -57,10 +57,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         if (users != null) {
             this.userList.clear();
             this.userList.addAll(users);
-            notifyDataSetChanged();  // Use notifyDataSetChanged() for now
+            notifyDataSetChanged();
         } else {
             this.userList = new ArrayList<>();
-            notifyDataSetChanged();  // Or handle the empty state accordingly
+            notifyDataSetChanged();
         }
     }
 

@@ -13,7 +13,7 @@ public class UserItem extends RecyclerView.ViewHolder {
 
     public UserItem(View itemView) {
         super(itemView);
-        // Ensure these IDs match the ones in your layout XML
+
         avatarImageView = itemView.findViewById(R.id.avatar_image_view);
         nameTextView = itemView.findViewById(R.id.name_text_view);
     }

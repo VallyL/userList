@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.userlist.model.User;
 import com.example.userlist.repository.UserRepository;
 import com.example.userlist.state.UserListState;
+import com.example.userlist.utils.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,10 @@ import java.util.List;
 public class MainViewModel extends ViewModel {
     private final UserRepository userRepository;
     private final MutableLiveData<Boolean> navigateToList = new MutableLiveData<>(false);
-    private final MutableLiveData<UserListState> userListState = new MutableLiveData<>(new UserListState());
+    private final MutableLiveData<UserListState> userListState = new MutableLiveData<>(new UserListState(new ArrayList<>(), false, null));
 
     public MainViewModel() {
         userRepository = new UserRepository();
-        // Optionally, load initial data here
-        // loadMoreUsers(1);
     }
 
     public LiveData<Boolean> getNavigateToList() {
@@ -43,28 +42,27 @@ public class MainViewModel extends ViewModel {
     }
 
     public void loadMoreUsers(int page) {
-        // Update loading state
         UserListState currentState = userListState.getValue();
         if (currentState != null) {
-            currentState.setLoading(true);
-            userListState.setValue(currentState);
+            UserListState loadingState = new UserListState(currentState.getUsers(), true, null);
+            userListState.setValue(loadingState);
 
-            userRepository.getUsersByPage(page).observeForever(usersList -> {
-                // Ensure this block is run on the main thread
-                if (currentState != null) {
-                    currentState.setLoading(false);
-                    if (usersList != null) {
-                        List<User> currentUsers = currentState.getUsers();
-                        if (currentUsers == null) {
-                            currentUsers = new ArrayList<>();
+            userRepository.getUsersByPage(page).observeForever(resource -> {
+                if (resource != null) {
+                    if (resource.status == Resource.Status.SUCCESS) {
+                        List<User> newUsers = resource.data;
+                        if (newUsers != null) {
+                            List<User> updatedUsers = new ArrayList<>();
+                            if (currentState.getUsers() != null) {
+                                updatedUsers.addAll(currentState.getUsers());
+                            }
+                            updatedUsers.addAll(newUsers);
+                            UserListState successState = new UserListState(updatedUsers, false, null);
+                            userListState.postValue(successState);
                         }
-                        currentUsers.addAll(usersList);
-                        currentState.setUsers(currentUsers);
-                        currentState.setErrorMessage(null);
-                    } else {
-                        currentState.setErrorMessage("Failed to load users.");
-                    }
-                    userListState.postValue(currentState);
+                    } else if (resource.status == Resource.Status.ERROR) {
+                        UserListState errorState = new UserListState(currentState.getUsers(), false, resource.message);
+                        userListState.postValue(errorState);}
                 }
             });
         }

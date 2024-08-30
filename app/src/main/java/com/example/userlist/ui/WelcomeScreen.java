@@ -27,10 +27,10 @@ public class WelcomeScreen extends Fragment {
 
         Button openListButton = view.findViewById(R.id.open_list_button);
         openListButton.setOnClickListener(v -> {
-            viewModel.setNavigateToList(true); // Trigger navigation
+            viewModel.navigateToList();
         });
 
-        // Preview the first user (if available)
+
         TextView userPreview = view.findViewById(R.id.user_preview);
         viewModel.getUserListState().observe(getViewLifecycleOwner(), userListState -> {
             if (userListState != null && userListState.getUsers() != null && !userListState.getUsers().isEmpty()) {

@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import com.example.userlist.model.User;
+import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface UserDao {
     void insertUser(User user);
 
     @Query("SELECT * FROM users")
-    List<User> getAllUsers();
+    LiveData<List<User>> getAllUsers();
 
     @Query("DELETE FROM users WHERE id = :id")
     void deleteUser(int id);

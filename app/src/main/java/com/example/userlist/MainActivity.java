@@ -15,23 +15,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         if (savedInstanceState == null) {
-            // Only replace fragment if there's no saved instance state
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new WelcomeScreen())
                     .commit();
         }
 
-        // Observe navigation state with lambda
+
         viewModel.getNavigateToList().observe(this, navigate -> {
-            if (navigate != null && navigate) {
+            if (navigate) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new UserListScreen())
                         .commit();
-                viewModel.resetNavigateToList(); // Reset navigation state
+                viewModel.resetNavigateToList();
             }
         });
     }

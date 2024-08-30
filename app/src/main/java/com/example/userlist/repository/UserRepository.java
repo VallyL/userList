@@ -7,6 +7,7 @@ import com.example.userlist.data.UserApi;
 import com.example.userlist.data.RetrofitClient;
 import com.example.userlist.model.User;
 import com.example.userlist.model.UserResponse;
+import com.example.userlist.utils.Resource;
 
 import java.util.List;
 
@@ -21,21 +22,23 @@ public class UserRepository {
         userApi = RetrofitClient.getRetrofitInstance().create(UserApi.class);
     }
 
-    public LiveData<List<User>> getUsersByPage(int page) {
-        MutableLiveData<List<User>> data = new MutableLiveData<>();
+    public LiveData<Resource<List<User>>> getUsersByPage(int page) {
+        MutableLiveData<Resource<List<User>>> data = new MutableLiveData<>();
+        data.setValue(Resource.loading(null));
+
         userApi.getUsers(page).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    data.setValue(response.body().getData()); // Extract the list of users from UserResponse
+                    data.setValue(Resource.success(response.body().getData()));
                 } else {
-                    data.setValue(null); // Handle HTTP error response
+                    data.setValue(Resource.error("HTTP Error: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                data.setValue(null); // Handle network failure
+            data.setValue(Resource.error("Network Error: " + t.getMessage(), null));
             }
         });
         return data;
