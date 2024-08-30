@@ -17,7 +17,7 @@ Technology Stack:
   - Room Persistence Library
 
 Getting Started:
-  1. Clone the Repository:
+  1. Clone the Repository: 'git clone https://github.com/VallyL/userList.git'
   2. Open in Android Studio:
        - Open the project in Android Studio.
        - Sync the project with Gradle files.
